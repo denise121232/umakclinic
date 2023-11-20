@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('faqs1.jpg');
+            background-color: #f4f4f4;
+            background-repeat: no-repeat;
+            background-size: cover;
+            opacity: 0.8;
+            color: #333;
+        }
+
+        section {
+            max-width: 400px;
+            margin: 40px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: none; /* Hide the chatbox initially */
+        }
+
+        #chat-box {
+            overflow-y: scroll;
+            max-height: 370px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        #user-input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 0;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        #send-button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4267b2;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .choices {
+            overflow-x: auto;
+            white-space: nowrap;
+            margin-top: 10px;
+        }
+
+        .choice {
+            display: inline-block;
+            background-color: #4267b2;
+            color: #fff;
+            padding: 10px;
+            margin-right: 5px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .choice:hover {
+            background-color: #314c86;
+        }
+
+        .response-message {
+            max-width: 60%;
+            word-wrap: break-word;
+        }
+
+        #chatbot-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-image: url('chatbot-gi.gif');
+            background-size: cover;
+            background-position: center ;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+<button id="chatbot-icon" onclick="toggleChatbox()"></button>
+
+<section id="section">
+    <div id="chat-box"></div>
+
+    <div class="choices">
+
+        <button class="choice" onclick="sendChoice('Connect to Live Agent')">Connect to Live Agent</button>
+        <button class="choice" onclick="sendChoice('Clinic Hours')">Clinic Hours</button>
+        <button class="choice" onclick="sendChoice('Option 3')">Option 3</button>
+        <button class="choice" onclick="sendChoice('Option 4')">Option 4</button>
+        <button class="choice" onclick="sendChoice('Option 5')">Option 5</button>
+    </div>
+
+    <input type="text" id="user-input" placeholder="Type your message...">
+    <button id="send-button" onclick="sendMessage()">Send</button>
+</section>
+
+<script>
+    var isConnectingToLiveAgent = false;
+
+    function sendMessage() {
+        var userInput = document.getElementById('user-input');
+        var chatBox = document.getElementById('chat-box');
+
+        var userMessage = userInput.value.trim();
+        if (userMessage !== '') {
+            // Display user message
+            chatBox.innerHTML += '<div style="text-align: right; margin-bottom: 5px;"><p style="background-color: #4267b2; color: #fff; padding: 10px; border-radius: 5px; display: inline-block;">' + userMessage + '</p></div>';
+            // Clear input field
+            userInput.value = '';
+
+            // Simulate a chatbot response
+            var botResponse = getBotResponse(userMessage);
+
+            // Display chatbot response with the response-message class
+            chatBox.innerHTML += '<div style="text-align: left; margin-bottom: 5px;"><p class="response-message" style="background-color: #ddd; color: #333; padding: 10px; border-radius: 5px; display: inline-block;">' + botResponse + '</p></div>';
+
+            // If connecting to live agent, simulate a delay and then show a response
+            if (isConnectingToLiveAgent) {
+                setTimeout(function () {
+                    chatBox.innerHTML += '<div style="text-align: left; margin-bottom: 5px;"><p class="response-message" style="background-color: #ddd; color: #333; padding: 10px; border-radius: 5px; display: inline-block;">You are now connected to a live agent.</p></div>';
+                    isConnectingToLiveAgent = false;
+                    // Scroll to the bottom of the chat box
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                }, 2000); // Simulating a 2-second delay
+            } else {
+                // Scroll to the bottom of the chat box
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        }
+    }
+
+    function sendChoice(choice) {
+        // Display user choice
+        var chatBox = document.getElementById('chat-box');
+        chatBox.innerHTML += '<div style="text-align: right; margin-bottom: 5px;"><p style="background-color: #4267b2; color: #fff; padding: 10px; border-radius: 5px; display: inline-block;">' + choice + '</p></div>';
+
+        // Simulate a chatbot response based on the user's choice
+        var botResponse = getBotResponse(choice);
+
+        // Display chatbot response with the response-message class
+        chatBox.innerHTML += '<div style="text-align: left; margin-bottom: 5px;"><p class="response-message" style="background-color: #ddd; color: #333; padding: 10px; border-radius: 5px; display: inline-block;">' + botResponse + '</p></div>';
+
+        // If user chooses to connect to a live agent, simulate the connection
+        if (choice.toLowerCase().includes('connect to live agent')) {
+            isConnectingToLiveAgent = true;
+        }
+
+        // Scroll to the bottom of the chat box
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function getBotResponse(userMessage) {
+        // Replace this function with actual chatbot integration logic
+        // For simplicity, using a simple response based on user input
+        if (userMessage.toLowerCase().includes('connect to live agent') || userMessage.toLowerCase().includes('live agent')) {
+            return 'Connecting to a live agent...';
+        } else if (userMessage.toLowerCase().includes('clinic hours')) {
+            return 'The UMak Medical and Dental Clinic is open every Mondays to Fridays, 8:00 A.M to 5:00 P.M';
+        } else if (userMessage.toLowerCase().includes('option 3')) {
+            return 'Option 3 is the way to go!';
+        } else if (userMessage.toLowerCase().includes('option 4')) {
+            return 'Option 4 is a new addition!';
+        } else if (userMessage.toLowerCase().includes('option 5')) {
+            return 'Option 5 is another choice!';
+        } else {
+            return 'Connect to live agent? Click Live Agent above...';
+        }
+    }
+
+    function toggleChatbox() {
+        var chatbox = document.getElementById('section');
+        chatbox.style.display = (chatbox.style.display === 'none' || chatbox.style.display === '') ? 'flex' : 'none';
+    }
+</script>
+
+</body>
+</html>
